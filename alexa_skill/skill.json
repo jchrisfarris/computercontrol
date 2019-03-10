@@ -1,0 +1,41 @@
+{
+  "manifest": {
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "arn:aws:lambda:us-east-1:379153516938:function:computercontrol-skill-endpoint"
+        },
+        "interfaces": []
+      }
+    },
+    "manifestVersion": "1.0",
+    "privacyAndCompliance": {
+      "locales": {
+        "en-US": {}
+      },
+      "allowsPurchases": false,
+      "usesPersonalInfo": false,
+      "isChildDirected": false,
+      "isExportCompliant": true,
+      "containsAds": false
+    },
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "Leo's Computer",
+          "summary": "Use voice control to manage Leo's computer use",
+          "description": "POC of an Alexa Skill",
+          "examplePhrases": [
+            "Alexa, Tell Leo's computer to mute the volume",
+            "Alexa, tell Leo's computer to go to sleep",
+            ""
+          ],
+          "keywords": []
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "None",
+      "distributionCountries": []
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "leo's computer",
+      "intents": [
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": [
+            "quit",
+            "stop",
+            "go back"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": [
+            "help"
+          ]
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": [
+            "quit",
+            "stop",
+            "go back"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "SleepIntent",
+          "slots": [],
+          "samples": [
+            "go to sleep",
+            "sleep",
+            "shutdown Leo's computer",
+            "Sleep Leo's computer",
+            "Put Leo's computer to sleep"
+          ]
+        },
+        {
+          "name": "MuteIntent",
+          "slots": [],
+          "samples": [
+            "mute the volume",
+            "mute",
+            "mute Leo's computer",
+            "turn down the volume"
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+}
