@@ -129,7 +129,11 @@ def execute_command(body):
 
     if command in COMMAND_MAP:
         logger.info("Executing {} : {}".format(command, COMMAND_MAP[command]))
-        return(True)
+        rc = os.system(COMMAND_MAP[command])
+        if rc == 0:
+            return(True)
+        else:
+            return(False) # message is not deleted from queue
     else:
         logger.error("Unknown Command {}".format(command))
         # Return True to delete the message.
