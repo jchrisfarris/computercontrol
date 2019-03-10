@@ -5,10 +5,17 @@
     <key>Label</key>
     <string>com.room17.computercontrol</string>
 
-    <key>Program</key>
-    <string>/rm17/cc/scripts/poll_for_commands.py --config /rm17/cc/config </string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/rm17/cc/scripts/poll_for_commands.py</string>
+        <string>--config</string>
+        <string>/rm17/cc/config</string>
+    </array>
 
     <key>KeepAlive</key>
+    <true/>
+
+    <key>RunAtLoad</key>
     <true/>
 
     <key>StandardErrorPath</key>

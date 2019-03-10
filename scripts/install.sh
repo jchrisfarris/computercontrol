@@ -30,16 +30,21 @@ if [ ! -d $BASEDIR/logs ] ; then
     mkdir -p $BASEDIR/logs
 fi
 
+# Allow user to write to logdir
+chmod 777 /rm17/cc/logs/
+
 cp $CONFIG /rm17/cc/config
 
 # Download Scripts
 curl -s ${REPOBASE}/scripts/download_scripts.sh | bash
 
-# Install LaunchAgent
-curl -s ${REPOBASE}/mac_files/com.room17.computercontrol.plist > ~/Library/LaunchAgents/com.room17.computercontrol.plist
-curl -s ${REPOBASE}/mac_files/computercontrol.sudo > /private/etc/sudoers.d/computercontrol
+pip install boto3
 
-launchctl load ~/Library/LaunchAgents/com.room17.computercontrol.plist
+# Install LaunchAgent
+curl -s ${REPOBASE}/mac_files/com.room17.computercontrol.plist > /rm17/cc/com.room17.computercontrol.plist
+# curl -s ${REPOBASE}/mac_files/computercontrol.sudo > /private/etc/sudoers.d/computercontrol
+
+sudo -u leo -s "launchctl load /rm17/cc/com.room17.computercontrol.plist"
 
 
 

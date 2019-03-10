@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 from __future__ import print_function
 
@@ -20,8 +20,8 @@ POLL_INTERVAL = 10
 DEFAULT_REGION = "us-east-1"
 
 COMMAND_MAP = {
-    "mute": "sudo /rm17/cc/scripts/mute.sh",
-    "sleep": "sudo /rm17/cc/scripts/sleep.sh"
+    "mute": "/rm17/cc/scripts/mute.sh",
+    "sleep": "/rm17/cc/scripts/sleep.sh"
 }
 
 
