@@ -1,0 +1,194 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy Resources to for the computer control skill
+
+Parameters:
+
+  pBucketName:
+    Description: S3 Bucket with Backups & logs
+    Type: String
+
+  pLambdaZipFile:
+    Description: File Name for the lambdas
+    Type: String
+
+  pIamUserName:
+    Type: String
+    Description: <optional> IAM Username with access to the Bucket & Queue
+    Default: NONE
+
+  pKeySerial:
+    Type: Number
+    Description: Set this to > 0 to generate an access key. Change this to generate a new one
+    Default: 0
+
+Conditions:
+  CreateIAMUser: !Not [ !Equals [ !Ref pIamUserName, "NONE"] ]
+  CreateKey: !Not [ !Equals [ !Ref pKeySerial, 0] ]
+
+Resources:
+  #
+  # IAM Roles
+  #
+  LambdaInvocationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - alexa-appkit.amazon.com
+          Action:
+          - sts:AssumeRole
+          Condition:
+            StringEquals:
+              "lambda:EventSourceToken": "amzn1.ask.skill.15eac8d9-ec8c-46e7-b3fa-3e2d84d19c75"
+      Path: /
+      Policies:
+      - PolicyName: ExecuteLambda
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Action:
+            - lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              - !GetAtt SkillFunction.Arn
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: logs
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Resource: '*'
+            Action:
+            - logs:*
+            Effect: Allow
+      - PolicyName: SQS
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Resource: !GetAtt ComputerEventQueue.Arn
+            Action:
+            - sqs:*
+            Effect: Allow
+
+  #
+  # Lambda to Execute
+  #
+  SkillFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-skill-endpoint"
+      Description: !Sub Alexa Skill Handler for ${AWS::StackName}
+      Runtime: python3.7
+      Handler: skill-endpoint.lambda_handler
+      Timeout: '80'
+      Code:
+        S3Bucket: !Ref pBucketName
+        S3Key: !Sub ${pLambdaZipFile}
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SQS_QUEUE: !Ref ComputerEventQueue
+
+
+  #
+  # SQS Queue
+  #
+  ComputerEventQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 300  # Any messages older than 5 minutes are
+      ReceiveMessageWaitTimeSeconds: 10
+      VisibilityTimeout: 300
+
+
+  # MySkill:
+  #   Type: "Alexa::ASK::Skill"
+  #   Properties:
+  #     SkillPackage:
+  #       S3Bucket: !Ref pBucketName
+  #       S3Key: !Ref pSkillZipFile
+  #       S3BucketRole: !GetAtt S3BucketReadRole.Arn
+  #       Overrides:
+  #         Manifest:
+  #           apis:
+  #             custom:
+  #               endpoint:
+  #                 uri: !GetAtt SkillFunction.Arn
+  #     AuthenticationConfiguration:
+  #       ClientId: "amzn1.application-oa2-client.1234"
+  #       ClientSecret: "1234"
+  #       RefreshToken: "Atzr|1234"
+  #     VendorId: "M1C39NFVIUX4GG"
+
+  #
+  # IAM User (for polling the SQS QUEUE)
+  #
+  ComputerIAMUser:
+    Condition: CreateIAMUser
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref pIamUserName
+      Path: /
+      Policies:
+      - PolicyName: S3Access
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Action:
+            - s3:*
+            Effect: Allow
+            Resource:
+              - !Join ['', ['arn:aws:s3:::', !Ref pBucketName , /*]]
+              - !Join ['', ['arn:aws:s3:::', !Ref pBucketName ]]
+          - Action:
+            - s3:ListAllMyBuckets
+            - s3:GetBucketLocation
+            Effect: Allow
+            Resource: '*'
+      - PolicyName: SQS
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Resource: !GetAtt ComputerEventQueue.Arn
+            Action:
+            - sqs:*
+            Effect: Allow
+
+  ComputerIAMUserKey:
+    Type: AWS::IAM::AccessKey
+    Condition: CreateKey
+    Properties:
+      Serial: !Ref pKeySerial
+      Status: Active
+      UserName: !Ref ComputerIAMUser
+
+
+
+Outputs:
+  STACKNAME:
+    Value: !Ref 'AWS::StackName'
+  BUCKET:
+    Value: !Ref pBucketName
+  SQSQUEUEURL:
+    Value: !Ref ComputerEventQueue
+  KEYID:
+    Value: !Ref ComputerIAMUserKey
+  SECRETKEY:
+    Value: !GetAtt ComputerIAMUserKey.SecretAccessKey
