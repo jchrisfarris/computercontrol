@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN http://www.apple.com/DTDs/PropertyList-1.0.dtd >
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.room17.computercontrol</string>
+
+    <key>Program</key>
+    <string>/rm17/cc/scripts/poll_for_commands.py --config /rm17/cc/config </string>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardErrorPath</key>
+    <string>/rm17/cc/logs/error.log</string>
+
+    <key>StandardOutPath</key>
+    <string>/rm17/cc/logs/messages.log</string>
+
+  </dict>
+</plist>

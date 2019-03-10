@@ -1,0 +1,5 @@
+# Allow Sudo for the CC commands
+
+Cmnd_Alias    CC_CMD = /rm17/cc/scripts/mute.sh, /rm17/cc/scripts/sleep.sh
+
+%admin          ALL = (ALL) NOPASSWD: CC_CMD
