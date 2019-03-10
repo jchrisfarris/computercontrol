@@ -44,15 +44,14 @@ logging.getLogger('boto3').setLevel(logging.WARNING)
 
 sb = CustomSkillBuilder(api_client=DefaultApiClient())
 
-WELCOME = ("Welcome to the Control Leo's Computer Skill!  "
-           "You can issue commands to tell it to sleep or mute the volume. What do you want to do?")
+WELCOME = "Welcome to the Control Leo's Computer Skill! You can issue commands to tell it to sleep or mute the volume. What do you want to do?"
 WHAT_DO_YOU_WANT = "What do you want to do?"
 ERROR = "Uh Oh. Looks like something went wrong."
 MESSAGE_SENT = "Message sent to Leo's computer"
 GOODBYE = "Bye! Thanks for using the Control Computer Skill!"
 UNHANDLED = "This skill doesn't support that. Please ask something else"
-HELP = ("You can use this skill by asking something like: "
-        "whats my address?")
+HELP = "You can use this skill by asking something like: tell Leo's computer to sleep"
+
 
 # permissions = ["read::alexa:device:all:address"]
 # Location Consent permission to be shown on the card. More information
