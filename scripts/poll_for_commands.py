@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+
+from __future__ import print_function
 
 import boto3
 from botocore.exceptions import ClientError
@@ -38,7 +40,7 @@ def main(args, logger):
             if execute_command(command):
                 delete_message(config['SQSQUEUEURL'], sqs_client, ReceiptHandle)
             else:
-                logger.error(f"Failed to execute command {command} for handle {ReceiptHandle}")
+                logger.error("Failed to execute command {} for handle {}".format(command, ReceiptHandle))
 
         time.sleep(POLL_INTERVAL)
 # end main
@@ -87,7 +89,7 @@ def poll_for_command(queue_url, sqs_client):
 
     if 'Messages' in response and len(response['Messages']) > 0 :
         body = json.loads(response['Messages'][0]['Body'])
-        logger.info(f"Got command: {body}")
+        logger.info("Got command: {}".format(body))
         return(body, response['Messages'][0]['ReceiptHandle'])
 
     return(None, None)
@@ -97,7 +99,7 @@ def delete_message(queue_url, sqs_client, ReceiptHandle):
         QueueUrl=queue_url,
         ReceiptHandle=ReceiptHandle
     )
-    logger.debug(f"Delete Response: {json.dumps(response, sort_keys=True)}")
+    logger.debug("Delete Response: {}".format(json.dumps(response, sort_keys=True)))
 
 
 def load_config(config_file):
@@ -105,7 +107,7 @@ def load_config(config_file):
 
     # Validate Config Exists
     if not os.path.isfile(config_file):
-        logger.critical(f"Cannot find config file {config_file}. Aborting...")
+        logger.critical("Cannot find config file {}. Aborting...".format(config_file))
         exit(1)
 
     # Open file
@@ -126,10 +128,10 @@ def execute_command(body):
     command = body['command']
 
     if command in COMMAND_MAP:
-        logger.info(f"Executing {command} : {COMMAND_MAP[command]}")
+        logger.info("Executing {} : {}".format(command, COMMAND_MAP[command]))
         return(True)
     else:
-        logger.error(f"Unknown Command {command}")
+        logger.error("Unknown Command {}".format(command))
         # Return True to delete the message.
         return(True)
 
